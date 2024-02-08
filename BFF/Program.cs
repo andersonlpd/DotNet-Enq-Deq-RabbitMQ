@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using BFF.Config;
 
 namespace BFF
 {
@@ -15,7 +14,8 @@ namespace BFF
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Configurar os serviços necessários
+            // Adding the LoggingConfig dependency
+            services.AddScoped<LoggingConfig>();
             services.AddControllers();
         }
 

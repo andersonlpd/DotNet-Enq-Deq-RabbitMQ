@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using System.Text;
 using BFF.Entity;
+using BFF.Config;
 
 namespace BFF.Controller
 {
@@ -12,23 +11,23 @@ namespace BFF.Controller
     public class ProduceController : ControllerBase
     {
         private readonly IConfiguration _config;
-        private readonly ILogger<ProduceController> _logger;
+        private readonly LoggingConfig _loggingConfig;
 
-        public ProduceController(IConfiguration config, ILogger<ProduceController> logger)
+        public ProduceController(IConfiguration config, LoggingConfig loggingConfig)
         {
             _config = config;
-            _logger = logger;
+            _loggingConfig = loggingConfig;
         }
 
         [HttpPost]
         public IActionResult ProduceMessage([FromBody] ProduceRequest request)
         {
 
-            _logger.LogInformation($"Received request to produce message. ID: {request.Id}, Message: {request.Message}");
+            _loggingConfig.LogInformation($"Received request to produce message. ID: {request.Id}, Message: {request.Message}");
 
             if (string.IsNullOrEmpty(request.Message))
             {
-                _logger.LogError("Message is required."); // Log de erro se a mensagem estiver ausente
+                _loggingConfig.LogError("Message is required.", null); // Log de erro se a mensagem estiver ausente
                 return BadRequest("The message field is required.");
             }
 
@@ -57,17 +56,16 @@ namespace BFF.Controller
                                          basicProperties: null,
                                          body: body);
 
-                    _logger.LogInformation("Message published successfully.");
+                    _loggingConfig.LogInformation("Message published successfully.");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Failed to publish message to RabbitMQ: {ex.Message}\n{ex.StackTrace}");
+                _loggingConfig.LogError($"Failed to publish message to RabbitMQ: {ex.Message}", ex);
                 return StatusCode(500, "Failed to publish message to RabbitMQ.");
             }
 
             return Ok("Message published successfully.");
         }
     }
-
 }
