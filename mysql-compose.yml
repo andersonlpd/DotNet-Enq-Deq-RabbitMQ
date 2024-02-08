@@ -1,0 +1,21 @@
+version: '3'
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: DotNetDatabase
+      MYSQL_ROOT_PASSWORD: mysql123
+    ports:
+      - "3306:3306"
+
+# Comando para criar a tabela necessária para o funcionamento do código
+
+#CREATE TABLE `Messages` (
+#`Timestamp` BIGINT,
+#`ID` INT(5),
+#`Message` VARCHAR(255),
+#PRIMARY KEY (`Timestamp`)
+#);
