@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BFF", "BFF\BFF.csproj", "{194F866E-F382-4B81-BF03-EA9685008BD9}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestrationService", "OrchestrationService\OrchestrationService.csproj", "{4AD1ADC4-635C-49D8-8E5E-B54D9408BA7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySQLService", "MySQLService\MySQLService.csproj", "{A2C63A07-4528-4069-9E58-A5D6B2D0DC65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySQLService", "MySQLService\MySQLApp.csproj", "{A2C63A07-4528-4069-9E58-A5D6B2D0DC65}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDBService", "MongoDBService\MongoDBService.csproj", "{94BC83A2-0B4E-4DD9-B4CF-9BF092A0D081}"
 EndProject
@@ -18,6 +20,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{194F866E-F382-4B81-BF03-EA9685008BD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{194F866E-F382-4B81-BF03-EA9685008BD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{194F866E-F382-4B81-BF03-EA9685008BD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{194F866E-F382-4B81-BF03-EA9685008BD9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4AD1ADC4-635C-49D8-8E5E-B54D9408BA7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4AD1ADC4-635C-49D8-8E5E-B54D9408BA7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AD1ADC4-635C-49D8-8E5E-B54D9408BA7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
