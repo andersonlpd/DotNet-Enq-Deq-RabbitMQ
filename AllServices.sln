@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BFF", "BFF\BFF.csproj", "{1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrchestrationService", "OrchestrationService\OrchestrationService.csproj", "{4AD1ADC4-635C-49D8-8E5E-B54D9408BA7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySQLService", "MySQLService\MySQLApp.csproj", "{A2C63A07-4528-4069-9E58-A5D6B2D0DC65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MySQLApp", "MySQLApp\MySQLApp.csproj", "{A2C63A07-4528-4069-9E58-A5D6B2D0DC65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDBService", "MongoDBService\MongoDBService.csproj", "{94BC83A2-0B4E-4DD9-B4CF-9BF092A0D081}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDBApp", "MongoDBApp\MongoDBApp.csproj", "{94BC83A2-0B4E-4DD9-B4CF-9BF092A0D081}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
