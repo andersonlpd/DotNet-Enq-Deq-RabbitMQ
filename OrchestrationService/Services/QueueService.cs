@@ -1,6 +1,8 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 using OrchService.Config;
 using OrchService.PublishToMySQL;
@@ -8,7 +10,7 @@ using OrchService.PublishToMongoDB;
 
 namespace OrchService.Queue
 {
-    public class RabbitMQOrchestrator
+    public class RabbitMQOrchestrator : BackgroundService
     {
         private readonly IConfiguration _config;
         private readonly LoggingConfig _loggingConfig;
@@ -38,6 +40,7 @@ namespace OrchService.Queue
 
                 _connection = factory.CreateConnection();
                 _channel = _connection.CreateModel();
+
                 _channel.QueueDeclare(queue: _config["RabbitMQ:QueueName"],
                                     durable: false,
                                     exclusive: false,
@@ -52,7 +55,7 @@ namespace OrchService.Queue
             _loggingConfig.LogInformation($"Orchestrator started listening to RabbitMQ successfully.");
         }
 
-        public void StartListening()
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try {
                 
@@ -91,15 +94,22 @@ namespace OrchService.Queue
                     }
 
                     _loggingConfig.LogDebug($"Message read from queue");
-                    //_channel.BasicConsume(queue: _config["RabbitMQ:QueueName"],
-                    //                        autoAck: true,
-                    //                        consumer: consumer);
+                    _channel.BasicConsume(queue: _config["RabbitMQ:QueueName"],
+                                            autoAck: true,
+                                            consumer: consumer);
                 };
             }
             catch (Exception ex) 
             {
                 _loggingConfig.LogError($"Failed to consume message from RabbitMQ: {ex.Message}", ex);
             }
+
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                _loggingConfig.LogInformation($"Worker ativo em: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                await Task.Delay(5000, stoppingToken);
+            }
+
         }
     }
 }

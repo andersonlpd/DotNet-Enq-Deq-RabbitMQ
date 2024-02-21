@@ -18,16 +18,12 @@ namespace MySQLController
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //Adding Logging config
-            services.AddScoped<LoggingConfig>();
-            services.AddScoped<RabbitMQOrchestrator>();
-            services.AddScoped<MySQLPublisher>();
-            services.AddScoped<MongoDBPublisher>();
+            services.AddSingleton<LoggingConfig>();
+            services.AddSingleton<MySQLPublisher>();
+            services.AddSingleton<MongoDBPublisher>();
 
-            // Registrando acesso ao IConfiguration
-            services.AddSingleton(Configuration);
+            services.AddHostedService<RabbitMQOrchestrator>();
 
-            //Adding Controllers
             services.AddControllers();
         }
 
@@ -46,14 +42,13 @@ namespace MySQLController
             });
 
             // Inicializando o RabbitMQOrchestrator dentro de um escopo de serviço
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                var orchestrator = scope.ServiceProvider.GetService<RabbitMQOrchestrator>();
-                orchestrator.StartListening();
-            }
+            //using (var scope = app.ApplicationServices.CreateScope())
+            //{
+            //    var orchestrator = scope.ServiceProvider.GetService<RabbitMQOrchestrator>();
+            //    orchestrator.StartListening();
+            //}
         }
     }
-
 
     public class Program
     {
