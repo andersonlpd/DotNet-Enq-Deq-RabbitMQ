@@ -1,4 +1,8 @@
 using OrchService.Config;
+using OrchService.PublishToMongoDB;
+using OrchService.PublishToMySQL;
+using OrchService.Queue;
+
 
 namespace MySQLController
 {
@@ -16,6 +20,13 @@ namespace MySQLController
         {
             //Adding Logging config
             services.AddScoped<LoggingConfig>();
+            services.AddScoped<RabbitMQOrchestrator>();
+            services.AddScoped<MySQLPublisher>();
+            services.AddScoped<MongoDBPublisher>();
+
+            // Registrando acesso ao IConfiguration
+            services.AddSingleton(Configuration);
+
             //Adding Controllers
             services.AddControllers();
         }
@@ -33,6 +44,13 @@ namespace MySQLController
             {
                 endpoints.MapControllers();
             });
+
+            // Inicializando o RabbitMQOrchestrator dentro de um escopo de serviço
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var orchestrator = scope.ServiceProvider.GetService<RabbitMQOrchestrator>();
+                orchestrator.StartListening();
+            }
         }
     }
 

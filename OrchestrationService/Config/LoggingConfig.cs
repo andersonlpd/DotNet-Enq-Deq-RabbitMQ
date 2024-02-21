@@ -10,6 +10,11 @@ namespace OrchService.Config
             _logger = logger;
         }
 
+        public void LogDebug(string message)
+        {
+            var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            _logger.LogDebug($"[{timestamp}] {message}");
+        }
         public void LogInformation(string message)
         {
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");

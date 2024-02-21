@@ -32,48 +32,74 @@ namespace OrchService.Queue
                 Password = _config["RabbitMQ:Password"]
             };
 
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
-            _channel.QueueDeclare(queue: _config["RabbitMQ:QueueName"],
-                                  durable: false,
-                                  exclusive: false,
-                                  autoDelete: false,
-                                  arguments: null);
+            _loggingConfig.LogInformation("Starting connection to RabbitMQ");
+
+            try {
+
+                _connection = factory.CreateConnection();
+                _channel = _connection.CreateModel();
+                _channel.QueueDeclare(queue: _config["RabbitMQ:QueueName"],
+                                    durable: false,
+                                    exclusive: false,
+                                    autoDelete: false,
+                                    arguments: null);
+            } 
+            catch (Exception ex) 
+            {
+                _loggingConfig.LogError($"Failed to connect to RabbitMQ: {ex.Message}", ex);
+            }
+
+            _loggingConfig.LogInformation($"Orchestrator started listening to RabbitMQ successfully.");
         }
 
         public void StartListening()
         {
-            var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (model, ea) =>
-            {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-
-                // Parse message to determine ID
-                var id = int.Parse(message.Split(':')[0]);
-
-                try
+            try {
+                
+                _loggingConfig.LogDebug("Starting to consume messages...");
+                var consumer = new EventingBasicConsumer(_channel);
+                consumer.Received += (model, ea) =>
                 {
+                    var body = ea.Body.ToArray();
+                    var message = Encoding.UTF8.GetString(body);
+
+                    _loggingConfig.LogDebug($"Got message from queue {message}");
+
+                    // Parse message to determine ID and message content
+                    var id = int.Parse(message.Split(':')[0]);
+                    var content = message.Split(':')[1];
+
+                    _loggingConfig.LogDebug($"message parsed id: {id}, content: {content}");
+
+                    // Generate current timestamp in epoch format
+                    var epochTimestamp = (int)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+
+                    // Create new message with timestamp
+                    var newMessage = $"{{\"timestamp\": {epochTimestamp}, \"id\": {id}, \"message\": \"{content}\"}}";
+
+                    _loggingConfig.LogDebug($"New message generated: {newMessage}");
+
                     if (id % 2 == 0)
                     {
-                        _mySQLPublisher.Publish(message);
+                        _mySQLPublisher.Publish(newMessage);
+                        _loggingConfig.LogInformation("Message sent successfully to MySQL persistence service");
                     }
                     else
                     {
-                        _mongoDBPublisher.Publish(message);
+                        _mongoDBPublisher.Publish(newMessage);
+                        _loggingConfig.LogInformation("Message sent successfully to MongoDB persistence service");
                     }
-                }
-                catch (Exception ex)
-                {
-                    _loggingConfig.LogError($"Failed to process message: {ex.Message}", ex);
-                }
-            };
 
-            _channel.BasicConsume(queue: _config["RabbitMQ:QueueName"],
-                                  autoAck: true,
-                                  consumer: consumer);
-
-            _loggingConfig.LogInformation("Orchestrator started listening to RabbitMQ queue.");
+                    _loggingConfig.LogDebug($"Message read from queue");
+                    //_channel.BasicConsume(queue: _config["RabbitMQ:QueueName"],
+                    //                        autoAck: true,
+                    //                        consumer: consumer);
+                };
+            }
+            catch (Exception ex) 
+            {
+                _loggingConfig.LogError($"Failed to consume message from RabbitMQ: {ex.Message}", ex);
+            }
         }
     }
 }
